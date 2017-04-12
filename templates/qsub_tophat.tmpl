@@ -1,0 +1,23 @@
+#!/bin/bash
+# a generic template for qsub jobs
+#$ -cwd
+#$ -o ${logfilename}
+#$ -j y
+#$ -S /bin/bash
+# send email at begin/end of job
+#$ -m e
+#$ -M rtwang@mednet.ucla.edu
+#$ -N samp${jobname}
+#$ -cwd 
+#$ -V
+#$ -l vf=${jobmem} 
+
+hostname
+echo "start..."
+date
+
+ ${command} 
+
+echo "end..."
+date
+times

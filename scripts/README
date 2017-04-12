@@ -1,0 +1,6 @@
+reorganizing scripts in this directory
+
+Assume:
+1. All rnaseq runs are assumed to be demultiplexed
+2. Each sample in its own dir
+3. each sample dir has its own subdirs (align, cuffquant, kallisto)
