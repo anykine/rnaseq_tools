@@ -4,7 +4,7 @@ import os
 import sys
 import subprocess
 
-class StarAligner(object):
+class STARAligner(object):
 	"""Wrapper around STAR RNAseq aligner"""
 	def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G'):
 		self.memory= mem
@@ -33,6 +33,11 @@ class StarAligner(object):
 		arglist.extend([ "--outSAMtype BAM SortedByCoordinate" ])
 		arglist.extend([ "--outFileNamePrefix %s" % self.outFileNamePrefix ])
 
+		# optimization keep genome in shared memory to prevent reloading between runs
+		# msut set RAM lmit for sorting, eg 10Gb
+		arglist.extend([ "--genomeLoad LoadAndKeep "])
+		arglist.extend([ "--limitBAMsortRAM 10737412742"])
+
 		# test if reads are gzipped, add this
 		if os.path.splitext(self.reads1)[1] ==".gz":
 			arglist.extend([ "--readFilesCommand zcat "])
@@ -42,7 +47,7 @@ class StarAligner(object):
 		return cmd
 
 
-class StarIndexCreator(object):
+class STARIndexCreator(object):
 	def __init__(self, outputDir, inputFastaFile, threads=48, SJout=None, SJoverhang=None):
 		""" gatk example uses SJoverhang 75 """
 		self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
