@@ -7,10 +7,11 @@ import subprocess
 class KallistoAligner(object):
 	"""Wrapper around Kallisto aligner"""
 	def __init__(self, transcriptIndex, nameOfJob, reads1, reads2, outputDir, command="quant"):
-		self.exe = "/share/apps/richard/kallisto/kallisto_linux-v0.42.5/kallisto"
+		self.exe = "/share/apps/richard/kallisto_linux-v0.42.5/kallisto"
 		# specify the bowtie2 index file (reference genome index base)
 		self.transcriptIndex = transcriptIndex 
 		self.name = nameOfJob 
+		self.threads = 8
 		self.command = command
 
 		#reads1 is a list of 1st pair or SE reads, reads2 is list of 2nd pair
@@ -31,6 +32,7 @@ class KallistoAligner(object):
 		arglist.extend([ "%s " % self.command ])
 		arglist.extend([ "-i %s " % self.transcriptIndex])
 		arglist.extend([ "-o %s " % self.outputDir  ])
+		arglist.extend([ "-t %s " % self.threads ])
 		arglist.extend([ "-b 100 " ])
 
 		if self.paired == False:

@@ -20,13 +20,19 @@ from sge import *
 # basedir
 # reference (hg19, dmd transcript)
 
-def makeFeatureCountScripts( samples, basedir, annot):
+def makeFeatureCountScripts( samples, basedir, annot, bamtype='tophat2'):
 	
 	#ANNOT='/home/rwang/scratch1/rnaseq/datasets/gencode/release24/gencode.v24lift37.basic.annotation.gtf'
 	ANNOT='/home/rwang/indexes/hg19/igenomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf'
 	
 	for samp in samples:
-		bamfile = os.path.join(basedir, samp, "03-align", samp+"_transcriptome.bam")
+		if bamtype=="tophat2":
+			bamfile = os.path.join(basedir, samp, "03-align", samp+"_transcriptome.bam")
+		elif bamtype=="STAR":
+			bamfile = os.path.join(basedir, samp, "03-alignSTAR", samp+"Aligned.sortedByCoord.out.bam")
+		else: 
+			sys.exit("bamtype paramter must be 'tophat' or 'STAR'")
+
 		outputdir = os.path.join(basedir, samp, "05-featureCount")
 		if not os.path.exists(outputdir):
 			os.makedirs(outputdir)
@@ -63,6 +69,11 @@ if __name__=="__main__":
 	config = json.loads(open(args.configfile).read())
 	# test if samples, basedir, reference are specified in JSON file
 	if all(k in config for k in ('samples', 'basedir', 'annotation')) :
-		print config['samples']
-		makeFeatureCountScripts(config['samples'], config['basedir'], annot=config['annotation'])
+		if 'bamtype' in config.keys():
+			bamtype=config['bamtype']
+		else:
+			bamtype='STAR'
+		print "samples are " + " ".join(config['samples'])
+		print "bamtype is " + str(bamtype)
+		makeFeatureCountScripts(config['samples'], config['basedir'], annot=config['annotation'], bamtype=bamtype)
 

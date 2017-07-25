@@ -6,12 +6,13 @@ templates/ - mako template for the qsub script
 
 So far, I have classes that will handle these aligners
 
-* Topha2
+* Tophat2
 * Cufflinks/Cuffquant
 * featureCount (subread)
 * kallisto
 * salmon
 * STAR
 * SpliceTrap
+
 
 

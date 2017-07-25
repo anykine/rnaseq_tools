@@ -6,11 +6,14 @@ import subprocess
 
 class STARAligner(object):
 	"""Wrapper around STAR RNAseq aligner"""
-	def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G'):
+	def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G', twopass=False):
+		self.twopass = twopass
 		self.memory= mem
 		self.bamout = bamout
 		self.threads = threads
-		self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
+		#self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
+		# this version has a 2 pass mode
+		self.exe = "/share/apps/richard/STAR_2.5.3a/bin/Linux_x86_64/STAR"
 		self.genomeDir = indexPath
 		self.outFileNamePrefix = outPrefix
 
@@ -42,6 +45,11 @@ class STARAligner(object):
 		if os.path.splitext(self.reads1)[1] ==".gz":
 			arglist.extend([ "--readFilesCommand zcat "])
 
+		if self.twopass == True:
+			arglist.extend([ "--twopassMode Basic "])
+		else:
+			arglist.extend([ "--twopassMode None "])
+
 		cmd =  " ".join(arglist)
 
 		return cmd
@@ -50,7 +58,8 @@ class STARAligner(object):
 class STARIndexCreator(object):
 	def __init__(self, outputDir, inputFastaFile, threads=48, SJout=None, SJoverhang=None):
 		""" gatk example uses SJoverhang 75 """
-		self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
+		#self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
+		self.exe = "/share/apps/richard/STAR_2.5.3a/bin/Linux_x86_64/STAR"
 		self.runMode = "genomeGenerate"
 		self.genomeOutputDir = outputDir
 		self.genomeFastaFiles = inputFastaFile

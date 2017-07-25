@@ -10,9 +10,11 @@ import shutil
 
 def renameTophatBamToSample(samples, basedir, reference):
 	for samp in samples:
+		# Tophat
 		if reference in ("hg19", "mm9"):
 			bamfile = os.path.join(basedir, samp, "03-align", "accepted_hits.bam")
 			newbamfile=os.path.join(basedir, samp, "03-align", samp + "_transcriptome.bam")
+		# align dmd
 		elif reference in ("dmd427m"):
 			bamfile = os.path.join(basedir, samp, "03-alignDMD", "accepted_hits.bam")
 			newbamfile=os.path.join(basedir, samp, "03-alignDMD", samp + "_427m.bam")
