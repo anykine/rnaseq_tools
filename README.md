@@ -1,3 +1,5 @@
+# Python scripts to generate run files for RNA-seq
+
 This is my collection of rnaseq tools
 
 scripts/ - python classes that wrap RNAseq tools/programs
@@ -13,6 +15,6 @@ So far, I have classes that will handle these aligners
 * salmon
 * STAR
 * SpliceTrap
-
+* indexes (aligner index files)
 
 

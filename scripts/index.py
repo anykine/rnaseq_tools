@@ -33,7 +33,8 @@ class Index(object):
 			return(bowtie2Index, None)
 
 		elif self.version == "ensembl_hg19" and self.program=="STAR":
-			STARIndex = "/home/rwang/scratch1/rnaseq/star_res/hg19"
+			#STARIndex = "/home/rwang/scratch1/rnaseq/star_res/hg19"
+			STARIndex = "/home/rtwang/projects/indexes/STAR/ENSEMBL.homo_sapiens.release-83"
 			return(STARIndex)
 
 		elif self.version == "ensembl_mm9" and self.program=="STAR":
@@ -46,6 +47,10 @@ class Index(object):
 
 		elif self.version == "ensembl_hg19" and self.program=="subjunc":
 			index = "/home/rwang/indexes/hg19/subjunc/ensembl_hg19"
+			return(index)
+
+		elif self.version == "ensembl37" and self.program=="bwa":
+			index = "/home/rtwang/projects/indexes/hg19/igenomes/Homo_sapiens/Ensembl/GRCh37/Sequence/BWAIndex/genome.fa"
 			return(index)
 
 		else:

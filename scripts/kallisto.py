@@ -7,7 +7,8 @@ import subprocess
 class KallistoAligner(object):
 	"""Wrapper around Kallisto aligner"""
 	def __init__(self, transcriptIndex, nameOfJob, reads1, reads2, outputDir, command="quant"):
-		self.exe = "/share/apps/richard/kallisto_linux-v0.42.5/kallisto"
+		#self.exe = "/share/apps/richard/kallisto_linux-v0.42.5/kallisto"
+		self.exe = "/home/rtwang/bin/kallisto_linux-v0.44.0/kallisto"
 		# specify the bowtie2 index file (reference genome index base)
 		self.transcriptIndex = transcriptIndex 
 		self.name = nameOfJob 

@@ -5,15 +5,31 @@ import sys
 import subprocess
 
 class STARAligner(object):
-	"""Wrapper around STAR RNAseq aligner"""
-	def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G', twopass=False):
+	"""
+	Wrapper around STAR RNAseq aligner
+	
+	Args:
+		indexPath (str): path to index
+		reads1 (array): array of read1
+		reads2 (array); array of read2
+		outPrefix (str): output prefix
+		bamout (bool): 
+		threads (int): number of threads to use
+		mem (int): RAM
+		twopass (bool): run STAR in 2pass mode
+		unmapped (str): what to do with unmapped reads
+	"""
+	def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G', twopass=False,
+			unmapped = 'Fastx'):
 		self.twopass = twopass
 		self.memory= mem
 		self.bamout = bamout
 		self.threads = threads
+		self.unmapped = unmapped
 		#self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
 		# this version has a 2 pass mode
-		self.exe = "/share/apps/richard/STAR_2.5.3a/bin/Linux_x86_64/STAR"
+		#self.exe = "/share/apps/richard/STAR_2.5.3a/bin/Linux_x86_64/STAR"
+		self.exe = "/share/apps/star_2.5.0a/bin/STAR"
 		self.genomeDir = indexPath
 		self.outFileNamePrefix = outPrefix
 
@@ -40,6 +56,7 @@ class STARAligner(object):
 		# msut set RAM lmit for sorting, eg 10Gb
 		arglist.extend([ "--genomeLoad LoadAndKeep "])
 		arglist.extend([ "--limitBAMsortRAM 10737412742"])
+		arglist.extend([ "--outReadsUnmapped %s" % self.unmapped ])
 
 		# test if reads are gzipped, add this
 		if os.path.splitext(self.reads1)[1] ==".gz":

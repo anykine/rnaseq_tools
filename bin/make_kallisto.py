@@ -2,7 +2,7 @@
 
 import os, sys
 import json
-sys.path.append('/home/rwang/rtwcode/rnaseq_tools/scripts')
+sys.path.append('/home/rtwang/rtwcode/rnaseq_tools/scripts')
 from index import *
 from kallisto import *
 from sge import *
@@ -38,7 +38,7 @@ def makeKallistoScripts(basedir, samples, reference ):
 		cmdtxt = ka.makeCommand()
 		print cmdtxt
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"kallisto", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "kallisto.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_kallisto" + ".sh")
 		print outscript

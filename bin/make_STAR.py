@@ -3,7 +3,7 @@
 import os, sys
 import json
 import argparse
-sys.path.append("/home/rwang/rtwcode/rnaseq_tools/scripts")
+sys.path.append("/home/rtwang/rtwcode/rnaseq_tools/scripts")
 from star import *
 from index import *
 from sge import *
@@ -27,11 +27,11 @@ def makeSTARScripts(basedir, samples, reference):
 		if not os.path.exists(outputdir):
 			os.makedirs(outputdir)
 		outFileNamePrefix = os.path.join(outputdir, samp)
-		sa = STARAligner( index, read1, read2, outFileNamePrefix, bamout=True, threads=48, mem='100G')
+		sa = STARAligner( index, read1, read2, outFileNamePrefix, bamout=True, threads=24, mem='40G')
 		cmdtxt = sa.makeCommand()
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
-		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'100G', 'logfilename': "_".join([str(samp), "STAR", str(reference)+".log"])}
+		qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'40G', 'logfilename': "_".join([str(samp), "STAR", str(reference)+".log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_STAR_" + str(reference) + ".sh")
 		print outscript
 		qsub.createJobScript(outscript, **args)
