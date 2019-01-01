@@ -52,7 +52,7 @@ def makeSTARVariantScripts(basedir, samples, reference):
 
 		cmdtxt = cmdtxt + "\n" + sa.makeCommand()
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'100G', 'logfilename': "_".join([str(samp), "STAR", str(reference)+".log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_STAR2pass_" + str(reference) + ".sh")
 		print outscript

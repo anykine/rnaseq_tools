@@ -16,7 +16,7 @@ for i in xrange(len(files)):
 	cmdtxt = obj.makeCommand()
 	print cmdtxt
 
-	qsub = SGE(names[i], "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+	qsub = SGE(names[i], "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 	args = {'command':cmdtxt, 'jobname': names[i], 'jobmem':'1G', 'logfilename': "_".join([ str(names[i]), "DMDextract.log"])}
 	outscript = str(names[i]) + "_DMDextract.sh"
 	qsub.createJobScript(outscript, **args)

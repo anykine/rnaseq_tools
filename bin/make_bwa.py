@@ -11,7 +11,7 @@ import json
 import argparse
 sys.path.append('/home/rtwang/rtwcode/rnaseq_tools/scripts')
 from index import *
-from tophat import *
+from bwa import *
 from sge import *
 
 # assumptions
@@ -21,35 +21,33 @@ from sge import *
 # 
 # inputs is json file called config_tophat2.json)
 
-def makeTophat2Scripts(basedir, samples, reference='dmd427m'):
-	Tophat2Index= Index(reference, "tophat2")
-	(bowtieIndex, prebuiltIndex) = Tophat2Index.output()
+def makeScripts(basedir, samples, reference='ensembl37'):
+	index= Index(reference, "bwa")
+	bwaIndex = index.output()
 	
 	for samp in samples:
 		read1 = os.path.join(basedir, samp, "00-raw", samp + "_1.fastq.gz")
 		read2 = os.path.join(basedir, samp, "00-raw", samp + "_2.fastq.gz")
-		if reference in ("dmd427m", "dmd427m_mm9"):
-			outputdir = os.path.join(basedir, samp, "03-alignDMD")
-		elif reference =="dmdgenomic":
-			outputdir = os.path.join(basedir, samp, "03-alignDMDgenomic")
-		else:
-			outputdir = os.path.join(basedir, samp, "03-alignTophat2")
+
+		filename = samp + ".sam"
+		outputdir = os.path.join(basedir, samp, "03-alignBWA" )
+		#outputdir = os.path.join(basedir, samp, "03-alignBWA", filename)
 
 		if not os.path.exists(outputdir):
 			os.makedirs(outputdir)
 
-		th = TophatAligner(bowtieIndex, samp,
+		outputfile = outputdir + "/" + filename
+		bwa = BWA(bwaIndex, samp,
 			[ read1],
 			[ read2],
-			outputdir)
-		#th.prebuiltIndex = prebuiltIndex 
-		cmdtxt = th.makeCommand()
+			outputfile)
+		cmdtxt = bwa.makeCommand()
 
 		# TODO: rename accepted_hits.bam to <sample>_transcriptome.bam
 
 		qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
-		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'20G', 'logfilename': "_".join([str(samp), "tophat", str(reference)+".log"])}
-		outscript = os.path.join(basedir,  samp, str(samp) + "_tophat_" + str(reference) + ".sh")
+		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'20G', 'logfilename': "_".join([str(samp), "BWA", str(reference)+".log"])}
+		outscript = os.path.join(basedir,  samp, str(samp) + "_bwa_" + str(reference) + ".sh")
 		print outscript
 		qsub.createJobScript(outscript, **args)
 
@@ -62,7 +60,7 @@ if __name__=="__main__":
 		# test if samples, basedir, reference are specified in JSON file
 		if all(k in config for k in ('samples', 'basedir', 'reference')) :
 			print config['samples']
-			makeTophat2Scripts(config['basedir'], config['samples'], reference=config['reference'])
+			makeScripts(config['basedir'], config['samples'], reference=config['reference'])
 
 # generate all tophat scripts: 
 # place config file in basedir and call this script

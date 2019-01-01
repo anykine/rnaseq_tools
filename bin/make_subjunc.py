@@ -41,7 +41,7 @@ def makeSubjuncScripts(basedir, samples, reference ):
 		cmdtxt = sj.makeCommand()
 		print cmdtxt
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"subjunc", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "subjunc.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_subjunc" + ".sh")
 		print outscript

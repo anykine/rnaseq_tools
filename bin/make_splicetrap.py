@@ -59,7 +59,7 @@ def makeSpliceTrapScripts(basedir, samples, reference, readsize, cutoff ):
 	
 		print cmdtxt
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"splicetrap", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "splicetrap.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_splicetrap" + ".sh")
 		print outscript

@@ -44,7 +44,7 @@ class KallistoAligner(object):
 
 		cmd =  " ".join(arglist)
 
-
+		sys.stderr.write("%s" % self.transcriptIndex)
 		# else return command line
 		return cmd
 

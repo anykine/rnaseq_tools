@@ -38,7 +38,7 @@ def makeCuffQuantScripts(samples, basedir, reference):
 		cmdtxt = cq.makeCommand()
 		print cmdtxt
 
-		qsub = SGE(samp, '/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl')
+		qsub = SGE(samp, '/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl')
 		args = {'command':cmdtxt, 'jobname': str(samp)+"_cuffquant", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "cuffquant.log"])}
 		outscript = os.path.join(basedir, samp, str(samp)+"_cuffquant.sh")
 		print outscript

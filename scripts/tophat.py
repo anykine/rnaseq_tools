@@ -8,7 +8,8 @@ class TophatAligner(object):
 	"""Wrapper around Tophat aligner"""
 	def __init__(self, bowtieIndexPath, nameOfJob, reads1, reads2, outputDir):
 		self.threads = 8
-		self.exe = "/share/apps/tophat-2.0.14.Linux_x86_64/tophat"
+		#self.exe = "/share/apps/tophat-2.0.14.Linux_x86_64/tophat"
+		self.exe = "/labshares/nelsonlab1/share/apps/tophat-2.1.1.Linux_x86_64/tophat"
 		# specify the bowtie2 index file (reference genome index base)
 		self.bowtieIndex = bowtieIndexPath
 		self.name = nameOfJob 

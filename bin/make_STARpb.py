@@ -23,7 +23,7 @@ def makeSTARScripts(basedir, samples, reference):
 		read1 = os.path.join(basedir, samp, "00-raw", samp+"_1.fastq.gz")
 		read2 = os.path.join(basedir, samp, "00-raw", samp+"_2.fastq.gz")
 
-		outputdir = os.path.join(basedir, samp, "03-alignSTAR" )
+		outputdir = os.path.join(basedir, samp, "03-alignSTARpacbio" )
 		if not os.path.exists(outputdir):
 			os.makedirs(outputdir)
 		outFileNamePrefix = os.path.join(outputdir, samp)

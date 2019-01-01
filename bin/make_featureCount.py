@@ -44,7 +44,7 @@ def makeFeatureCountScripts( samples, basedir, annot, bamtype='tophat2'):
 		cmdtxt = fc.makeCommand()
 		print cmdtxt
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"featurecounts", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "featurecounts.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_featurecounts" + ".sh")
 		print outscript

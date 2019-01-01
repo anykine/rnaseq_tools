@@ -23,7 +23,7 @@ def makeFastQCscripts(basedir, samples):
 		FastQC_obj = FastQC( outputdir, fileList=fileList)
 		cmdtxt = FastQC_obj.makeCommand()
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"FastQC", 'jobmem':'4G', 'logfilename': "_".join([str(samp), "FastQC.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_FastQC" + ".sh")
 		print outscript

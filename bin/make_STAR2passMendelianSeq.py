@@ -35,7 +35,7 @@ def makeSTAR2passMendelianSeq(basedir, samples, mergedReference, outdir):
 		sa = STARAligner( index, read1, read2, outFileNamePrefix, bamout=True, threads=48, mem='100G')
 		cmdtxt = sa.makeCommand()
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'100G', 'logfilename': "_".join([str(samp), "STAR2passMendelianSeq", str(reference)+".log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_STAR2passMendelianSeq_" + str(reference) + ".sh")
 		print outscript

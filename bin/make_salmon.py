@@ -40,7 +40,7 @@ def makeSalmonScripts(basedir, samples, reference, libtype ):
 		cmdtxt = sa.makeCommand()
 		print cmdtxt
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"salmon", 'jobmem':'4G', 'logfilename': "_".join([str(samp), "salmon.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_salmon" + ".sh")
 		print outscript

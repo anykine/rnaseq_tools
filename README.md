@@ -1,6 +1,6 @@
 # Python scripts to generate run files for RNA-seq
 
-This is my collection of rnaseq tools
+A collection of script genereators for various rnaseq tools
 
 scripts/ - python classes that wrap RNAseq tools/programs
 bin/ - scripts that use python classes to create qsub scripts

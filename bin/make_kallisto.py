@@ -22,7 +22,8 @@ from sge import *
 def makeKallistoScripts(basedir, samples, reference ):
 	
 	#transcriptIndex = '/share/apps/richard/kallisto/kallisto_linux-v0.42.5/index/ensembl_GRCh37_transcripts_index'
-	transcriptIndex = reference
+	transcriptIndex= Index(reference, "kallisto").output()
+
 	for samp in samples:
 		read1 = os.path.join(basedir, samp, "00-raw", samp + "_1.fastq.gz")
 		read2 = os.path.join(basedir, samp, "00-raw", samp + "_2.fastq.gz")
@@ -38,16 +39,13 @@ def makeKallistoScripts(basedir, samples, reference ):
 		cmdtxt = ka.makeCommand()
 		print cmdtxt
 
-		qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':cmdtxt, 'jobname': str(samp)+"kallisto", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "kallisto.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_kallisto" + ".sh")
 		print outscript
 		qsub.createJobScript(outscript, **args)
 
-# generate all tophat scripts: 
 
-#samples = [ "DDX7", "DDX8", "DDX9", "SH790"]
-#basedir='/home/rwang/scratch1/rnaseq/human/Feb12/'
 config = json.loads(open("config_kallisto.json").read())
 makeKallistoScripts(config['basedir'], config['samples'], reference=config['reference'] )
 

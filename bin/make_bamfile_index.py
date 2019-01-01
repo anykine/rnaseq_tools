@@ -30,7 +30,7 @@ def makeBamfileIndex(basedir, samples ):
 			fullcmdtxt = fullcmdtxt +  cmdtxt + "\n"
 		print fullcmdtxt
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub_tophat.tmpl")
+		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
 		args = {'command':fullcmdtxt, 'jobname': str(samp)+"index", 'jobmem':'10G', 'logfilename': "_".join([str(samp), "index.log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_bamindex.sh")
 		print outscript
