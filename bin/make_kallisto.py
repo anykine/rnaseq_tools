@@ -6,6 +6,7 @@ sys.path.append('/home/rtwang/rtwcode/rnaseq_tools/scripts')
 from index import *
 from kallisto import *
 from sge import *
+from siteconfig import *
 
 # assumptions
 # fastq file in 00-raw/ directory
@@ -19,7 +20,7 @@ from sge import *
 # basedir
 # reference (hg19, dmd transcript)
 
-def makeKallistoScripts(basedir, samples, reference ):
+def makeKallistoScripts(basedir, samples, reference, bootstrapSamples=False ):
 	
 	#transcriptIndex = '/share/apps/richard/kallisto/kallisto_linux-v0.42.5/index/ensembl_GRCh37_transcripts_index'
 	transcriptIndex= Index(reference, "kallisto").output()
@@ -35,6 +36,7 @@ def makeKallistoScripts(basedir, samples, reference ):
 			[ read1],
 			[ read2],
 			outputdir,
+            bootstrapSamples,
 			"quant")
 		cmdtxt = ka.makeCommand()
 		print cmdtxt
@@ -46,6 +48,12 @@ def makeKallistoScripts(basedir, samples, reference ):
 		qsub.createJobScript(outscript, **args)
 
 
+# TODO - need to add bootstrapSamples as default
 config = json.loads(open("config_kallisto.json").read())
-makeKallistoScripts(config['basedir'], config['samples'], reference=config['reference'] )
+if 'bootstrapSamples' not in  config:
+    config['bootstrapSamples'] = False
+print config
+makeKallistoScripts(config['basedir'], config['samples'],
+        reference=config['reference'] ,
+        bootstrapSamples=config['bootstrapSamples'])
 

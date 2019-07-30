@@ -12,7 +12,6 @@ from sge import *
 # this is broad/gatk recommended workflow
 
 def makeSTARScripts(basedir, samples, reference):
-	pass
 
 	# assume genome index file already exists (1st pass)
 	# align 
@@ -27,11 +26,16 @@ def makeSTARScripts(basedir, samples, reference):
 		if not os.path.exists(outputdir):
 			os.makedirs(outputdir)
 		outFileNamePrefix = os.path.join(outputdir, samp)
-		sa = STARAligner( index, read1, read2, outFileNamePrefix, bamout=True, threads=24, mem='40G')
+
+        # lowered the number of threads from 24 to 8 to prevent "cannot create output file,
+        # check ulimit ERROR
+		sa = STARAligner( index, read1, read2, outFileNamePrefix, bamout=True,
+                threads=8, mem='50G')
 		cmdtxt = sa.makeCommand()
 
 		qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
-		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference), 'jobmem':'40G', 'logfilename': "_".join([str(samp), "STAR", str(reference)+".log"])}
+		args = {'command':cmdtxt, 'jobname': str(samp)+str(reference),
+                'jobmem':'50G', 'logfilename': "_".join([str(samp), "STAR", str(reference)+".log"])}
 		outscript = os.path.join(basedir,  samp, str(samp) + "_STAR_" + str(reference) + ".sh")
 		print outscript
 		qsub.createJobScript(outscript, **args)
