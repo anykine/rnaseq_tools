@@ -73,6 +73,15 @@ class Index(SiteconfigBase):
             index = os.path.join(self.indexBasePath, "hg19/kallisto/ensembl_GRCh37_transcripts_index")
             return(index)
         #
+        # hg19 transcriptome (ensembl, ucsc)
+        #
+
+        # this STAR index generated for 150bp reads
+        elif self.version == "GRCh38_149" and self.program=="STAR":
+            index = os.path.join(self.indexBasePath, "GRCh38/star_res149")
+            return(index)
+
+        #
         # DMD 427m transcript only
         #
         elif self.version == "dmd427m" and self.program=="tophat2":

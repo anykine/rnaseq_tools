@@ -3,6 +3,8 @@
 import os
 import sys
 import subprocess
+from siteconfig import Appconfig
+import json
 
 # This use of featureCount is set for counting reads in EXONS only!
 
@@ -27,10 +29,14 @@ import subprocess
 # -o /home/rwang/scratch1/rnaseq/datasets/bodymap2/ERR030887/05-featureCount1/ERR030887_featureCount.txt  \
 # /home/rwang/scratch1/rnaseq/datasets/bodymap2/ERR030887/03-star/ERR030887Aligned.sortedByCoord.out.bam  
 
-class FeatureCount (object):
+class FeatureCount (Appconfig):
 	"""Wrapper around featurecount (subread)"""
 	def __init__(self, annot, nameOfJob, bamfile, outputDir ):
-		self.exe = "/share/apps/richard/subread-1.5.0-p1-Linux-x86_64/bin/featureCounts"
+        """
+        Constructor
+        """
+        Appconfig.__init__(self, "featureCount")
+		#self.exe = "/share/apps/richard/subread-1.5.0-p1-Linux-x86_64/bin/featureCounts"
 		# specify the bowtie2 index file (reference genome index base)
 		self.annotation = annot
 		self.name = nameOfJob 
