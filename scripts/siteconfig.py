@@ -49,6 +49,9 @@ class SiteconfigBase(object):
     def appBasePath(self):
         return self.getProperty('appBasePath')
 
+    @property
+    def gtfBasePath(self):
+        return self.getProperty('gtfBasePath')
 
 class Appconfig(SiteconfigBase):
     """

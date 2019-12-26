@@ -30,44 +30,53 @@ import json
 # /home/rwang/scratch1/rnaseq/datasets/bodymap2/ERR030887/03-star/ERR030887Aligned.sortedByCoord.out.bam  
 
 class FeatureCount (Appconfig):
-	"""Wrapper around featurecount (subread)"""
-	def __init__(self, annot, nameOfJob, bamfile, outputDir ):
+    """Wrapper around featurecount (subread)"""
+    def __init__(self, gtf, nameOfJob, bamfile, outputDir ):
         """
         Constructor
+
+         gtf (str): GTF annotation file
+         nameOfJob (str): job name
+         bamfile (str): name of aligned BAM file
+         outputDir (str): path to output dir
+
+        This code looks at exons, so both featureTYpe and
+        and attributeType are exon/exon_id
         """
-        Appconfig.__init__(self, "featureCount")
-		#self.exe = "/share/apps/richard/subread-1.5.0-p1-Linux-x86_64/bin/featureCounts"
-		# specify the bowtie2 index file (reference genome index base)
-		self.annotation = annot
-		self.name = nameOfJob 
-		self.threads = 5
-		self.featureType = "exon"
-		self.attributeType = "exon_id"
 
-		self.bamfile = bamfile
+        Appconfig.__init__(self, "featureCounts")
+        #self.exe = "/share/apps/richard/subread-1.5.0-p1-Linux-x86_64/bin/featureCounts"
+        # specify the bowtie2 index file (reference genome index base)
+        self.annotation = gtf
+        self.name = nameOfJob 
+        self.threads = 5
+        self.featureType = "exon"
+        self.attributeType = "exon_id"
 
-		self.outputDir = outputDir
+        self.bamfile = bamfile
 
-	def makeCommand(self):
-		"""generate commandline"""
-		arglist = ["%s" % self.exe ]
-		arglist.extend([ "-T %s " % self.threads])
-		arglist.extend([ "-a %s " % self.annotation])
-		arglist.extend([ "-t %s " % self.featureType])
-		arglist.extend([ "-g %s " % self.attributeType])
-		arglist.extend([ "-f " ])
-		arglist.extend([ "-p " ])
+        self.outputDir = outputDir
 
-		#arglist.extend([ "-R " ])
-		arglist.extend([ "-O  " ])
-		#arglist.extend([ "-M  " ])   # multimapping
-		arglist.extend([ "-o %s " % os.path.join(self.outputDir, self.name+"_featureCount.txt")  ])
-		arglist.extend([ "%s " % self.bamfile])
+    def makeCommand(self):
+        """generate commandline"""
+        arglist = ["%s" % self.exe ]
+        arglist.extend([ "-T %s " % self.threads])
+        arglist.extend([ "-a %s " % self.annotation])
+        arglist.extend([ "-t %s " % self.featureType])  # count by exon
+        arglist.extend([ "-g %s " % self.attributeType]) # use exon_id 
+        arglist.extend([ "-f " ])  # count readsat the feature level (ie exon)
+        arglist.extend([ "-p " ])  # count fragments instead of reads
 
-
-		cmd =  " ".join(arglist)
+        #arglist.extend([ "-R " ])
+        arglist.extend([ "-O  " ]) # count all overlapping features of a read
+        #arglist.extend([ "-M  " ])   # multimapping
+        arglist.extend([ "-o %s " % os.path.join(self.outputDir, self.name+"_featureCount.txt")  ])
+        arglist.extend([ "%s " % self.bamfile])
 
 
-		# else return command line
-		return cmd
+        cmd =  " ".join(arglist)
+
+
+        # else return command line
+        return cmd
 

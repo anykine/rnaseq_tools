@@ -3,10 +3,10 @@
 import os, sys
 import json
 import argparse
-sys.path.append('/home/rwang/rtwcode/rnaseq_tools/scripts')
-from index import *
+sys.path.append('/home/rtwang/rtwcode/rnaseq_tools/scripts')
 from featureCount import *
 from sge import *
+from gtf import *
 
 # assumptions
 # fastq file in 00-raw/ directory
@@ -20,35 +20,48 @@ from sge import *
 # basedir
 # reference (hg19, dmd transcript)
 
-def makeFeatureCountScripts( samples, basedir, annot, bamtype='tophat2'):
-	
-	#ANNOT='/home/rwang/scratch1/rnaseq/datasets/gencode/release24/gencode.v24lift37.basic.annotation.gtf'
-	ANNOT='/home/rwang/indexes/hg19/igenomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf'
-	
-	for samp in samples:
-		if bamtype=="tophat2":
-			bamfile = os.path.join(basedir, samp, "03-align", samp+"_transcriptome.bam")
-		elif bamtype=="STAR":
-			bamfile = os.path.join(basedir, samp, "03-alignSTAR", samp+"Aligned.sortedByCoord.out.bam")
-		else: 
-			sys.exit("bamtype paramter must be 'tophat' or 'STAR'")
+# TODO
+#  FC needs to search the correct directory for the BAM file
+#  abstract GTF file location
+#  
 
-		outputdir = os.path.join(basedir, samp, "05-featureCount")
-		if not os.path.exists(outputdir):
-			os.makedirs(outputdir)
+def makeFeatureCountScripts( samples, basedir, annot, bamtype='STAR',
+        bamdir="03-alignSTAR"):
 
-		fc = FeatureCount(annot, samp,
-			bamfile,
-			outputdir
-			)
-		cmdtxt = fc.makeCommand()
-		print cmdtxt
+    #ANNOT='/home/rwang/scratch1/rnaseq/datasets/gencode/release24/gencode.v24lift37.basic.annotation.gtf'
+    #ANNOT='/home/rwang/indexes/hg19/igenomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf'
+    annotParams= annot.split("-")
+    #gtf = Gtf("GRCh37", "ensembl", "human").output()
+    gtf = Gtf(annotParams[0], annotParams[1], annotParams[2]).output()
 
-		qsub = SGE(samp, "/home/rwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
-		args = {'command':cmdtxt, 'jobname': str(samp)+"featurecounts", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "featurecounts.log"])}
-		outscript = os.path.join(basedir,  samp, str(samp) + "_featurecounts" + ".sh")
-		print outscript
-		qsub.createJobScript(outscript, **args)
+    for samp in samples:
+        if bamtype=="tophat2":
+            bamfile = os.path.join(basedir, samp, "03-align", samp+"_transcriptome.bam")
+        elif bamtype=="STAR":
+            if bamdir:
+                bamfile = os.path.join(basedir, samp, bamdir,
+                        samp+"Aligned.sortedByCoord.out.bam")
+            else:
+                bamfile = os.path.join(basedir, samp, "03-alignSTAR", samp+"Aligned.sortedByCoord.out.bam")
+        else: 
+            sys.exit("bamtype paramter must be 'tophat' or 'STAR'")
+
+        outputdir = os.path.join(basedir, samp, "05-featureCount")
+        if not os.path.exists(outputdir):
+            os.makedirs(outputdir)
+
+        fc = FeatureCount(gtf, samp,
+            bamfile,
+            outputdir
+            )
+        cmdtxt = fc.makeCommand()
+        print cmdtxt
+
+        qsub = SGE(samp, "/home/rtwang/rtwcode/rnaseq_tools/templates/qsub.tmpl")
+        args = {'command':cmdtxt, 'jobname': str(samp)+"featurecounts", 'jobmem':'20G', 'logfilename': "_".join([str(samp), "featurecounts.log"])}
+        outscript = os.path.join(basedir,  samp, str(samp) + "_featurecounts" + ".sh")
+        print outscript
+        qsub.createJobScript(outscript, **args)
 #
 # generate all tophat scripts: 
 # iterate over all all samples: ddx7/8/9/sh790
@@ -62,18 +75,18 @@ def makeFeatureCountScripts( samples, basedir, annot, bamtype='tophat2'):
 #makeFeatureCountScripts(samplesAndBams )
 
 if __name__=="__main__":
-	parser = argparse.ArgumentParser()
-	parser.add_argument("configfile", help="config file with options: eg config_tophat2.json")
-	args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("configfile", help="config file with options: eg config_featureCounts.json")
+    args = parser.parse_args()
 
-	config = json.loads(open(args.configfile).read())
-	# test if samples, basedir, reference are specified in JSON file
-	if all(k in config for k in ('samples', 'basedir', 'annotation')) :
-		if 'bamtype' in config.keys():
-			bamtype=config['bamtype']
-		else:
-			bamtype='STAR'
-		print "samples are " + " ".join(config['samples'])
-		print "bamtype is " + str(bamtype)
-		makeFeatureCountScripts(config['samples'], config['basedir'], annot=config['annotation'], bamtype=bamtype)
+    config = json.loads(open(args.configfile).read())
+    # test if samples, basedir, reference are specified in JSON file
+    if all(k in config for k in ('samples', 'basedir', 'annotation')) :
+        if 'bamtype' in config.keys():
+            bamtype=config['bamtype']
+        else:
+            bamtype='STAR'
+        print "samples are " + " ".join(config['samples'])
+        print "bamtype is " + str(bamtype)
+        makeFeatureCountScripts(config['samples'], config['basedir'], annot=config['annotation'], bamtype=bamtype)
 

@@ -102,6 +102,24 @@ class Index(SiteconfigBase):
             index = "/home/rwang/indexes/mm9/subjunc/ensembl_mm9"
             return(index)
         #
+        # Mouse GRCm38 Ensembl (same as mm10)
+        #
+        elif self.version == "ensembl_GRCm38" and self.program=="kallisto":
+            index = os.path.join(self.indexBasePath, "kallisto/ensembl_GRCm38/transcriptome.idx")
+            return(index)
+        #
+        # Mouse GRCm38 Ensembl (same as mm10) built from Ensembl len=99
+        #
+        elif self.version == "ensembl_GRCm38" and self.program=="STAR":
+            STARIndex = os.path.join(self.indexBasePath, "star_res/ensembl_GRCm38")
+            return(STARIndex)
+        #
+        # Mouse mm10 transcriptome
+        #
+        elif self.version == "ensembl_mm10" and self.program=="STAR":
+            STARIndex = "/home/rtwang/projects/indexes/star_res/mm10"
+            return(STARIndex)
+        #
         # Mouse mm9 transcriptome
         #
         elif self.version == "mm9" and self.program=="tophat2":
