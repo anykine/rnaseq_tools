@@ -10,7 +10,7 @@ class STARAligner(Appconfig):
     Wrapper around STAR RNAseq aligner
     """
     def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G', twopass=False,
-            unmapped = 'Fastx'):
+            unmapped = False):
         """
         Args:
             indexPath (str): path to index
@@ -59,7 +59,8 @@ class STARAligner(Appconfig):
         # msut set RAM lmit for sorting, eg 10Gb
         arglist.extend([ "--genomeLoad LoadAndKeep "])
         arglist.extend([ "--limitBAMsortRAM 10737412742"])
-        arglist.extend([ "--outReadsUnmapped %s" % self.unmapped ])
+        if self.unmapped == "Fastx":
+            arglist.extend([ "--outReadsUnmapped %s" % self.unmapped ])
 
         # test if reads are gzipped, add this
         if os.path.splitext(self.reads1)[1] ==".gz":
