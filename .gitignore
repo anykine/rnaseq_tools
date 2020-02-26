@@ -3,3 +3,5 @@
 __pycache__/
 *$py.class
 
+scripts/appconfig.json
+scripts/siteconfig.json
