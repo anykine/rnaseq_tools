@@ -1,6 +1,6 @@
 # RNA-Seq tools
 
-A collection of scripts to generate bash scripts for the following tools:
+A collection of scripts to generate bash scripts on an SGE cluster for the following tools:
 
 * STAR
 * kallisto
@@ -14,15 +14,15 @@ A collection of scripts to generate bash scripts for the following tools:
 
 ## Code
 
-scripts/ - python classes that wrap RNA-Seq tools/programs
-bin/ - scripts that use python classes to create qsub scripts
-templates/ - mako template for the qsub script
+  + scripts/ - python classes that wrap RNA-Seq tools/programs
+  + bin/ - scripts that use python classes to create qsub scripts
+  + templates/ - mako template for the qsub script
 
 ## Dependencies
 
-Python 2
-
-mako template class
+  + Python 2
+  + mako template class
+  + Sun Grid Engine
 
 ## Data organization
 
@@ -83,5 +83,5 @@ sampleB/sampleB_STAR_ensembl_hg19.sh
 
 ```
 
-which we can run from the run directory like `find -type f -name *STAR*.sh -exec qsub {} \;`
+We can qsub all the files like this (from the run directory) `find -type f -name *STAR*.sh -exec qsub {} \;`
 
