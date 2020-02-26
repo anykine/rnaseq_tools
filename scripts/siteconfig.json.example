@@ -1,0 +1,5 @@
+{
+"server": "myserver",
+"indexBasePath": "/path/to/indexes/",
+"appBasePath": "/path/to/shared/apps/"
+}
