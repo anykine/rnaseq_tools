@@ -5,12 +5,10 @@
 #$ -j y
 #$ -S /bin/bash
 # send email at begin/end of job
-#$ -m e
-#$ -M rtwang@mednet.ucla.edu
 #$ -N j${jobname}
 #$ -cwd 
 #$ -V
-#$ -l vf=${jobmem} 
+#$ -l vf=${jobmem},mem_free=${jobmem},h_vmem=${jobmem}
 
 hostname
 echo "start..."

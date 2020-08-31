@@ -7,63 +7,88 @@ from siteconfig import Appconfig
 
 class STARAligner(Appconfig):
     """
-    Wrapper around STAR RNAseq aligner
+    Wrapper around STAR RNAseq aligner. It will generate the qsub run script.
+
+    This assumes that FASTQs are gzipped.
+
+    2pass mode not currently implemented. Needs to build genome index at
+    runtime.
     """
-    def __init__(self, indexPath, reads1, reads2, outPrefix, bamout=True, threads=48, mem='100G', twopass=False,
-            unmapped = False):
+    def __init__(self, **kwargs):
         """
+        Defaults are preassigned. Other options can be assigned in the
+        config.json file provided to make_STAR.py and will be overriden.
+
         Args:
             indexPath (str): path to index
-            reads1 (array): array of read1
-            reads2 (array); array of read2
+            reads (tuple): (/path/file_1.gz, /path/file_2.gz)
             outPrefix (str): output prefix
             bamout (bool): 
             threads (int): number of threads to use
             mem (int): RAM
             twopass (bool): run STAR in 2pass mode
-            unmapped (str): what to do with unmapped reads
+            unmapped (str): None, Within (adds unmapped to BAM), File (creates Unmapped.out.mate1/2)
+            genomeLoad (str):  LoadAndKeep, LoadAndRemove, LoadAndExit, NoSharedMemory 
         """
         Appconfig.__init__(self, "STAR")
-        self.twopass = twopass
-        self.memory= mem
-        self.bamout = bamout
-        self.threads = threads
-        self.unmapped = unmapped
-        #self.exe = "/share/apps/richard/STAR_2.4.0j/bin/Linux_x86_64/STAR"
-        # this version has a 2 pass mode
-        #self.exe = "/share/apps/richard/STAR_2.5.3a/bin/Linux_x86_64/STAR"
-        #self.exe = "/share/apps/star_2.5.0a/bin/STAR"
-        self.genomeDir = indexPath
-        self.outFileNamePrefix = outPrefix
 
-        # reads1 is a list of 1st pair or SE reads, reads2 is list of 2nd pair
-        # if single end, pass empty list for read2 []
-        if len(reads2) > 0:
-            self.paired = True
-            self.reads1 = reads1
-            self.reads2 = reads2
-        else:
-            self.paired = False
-            self.reads1 = reads1
+        # Default values for these fields
+        self.twopass = False
+        self.memory= '60G'
+        self.bamout = True
+        self.threads = 8
+        self.unmapped = None
+        self.genomeDir = None
+        self.outFileNamePrefix = None
+        self.limitBAMsortRAM = 10737412742
+        self.genomeLoad = 'LoadAndKeep'
+
+        # reads is a tuple of 2 PE reads or 1 SE read
+        self.reads = (None, None)
+
+        # get predefined values from __dict__
+        allowed_keys = list(self.__dict__.keys())
+
+        #update using kwargs only for allowed keys
+        #these are passed from make_STAR.py and controlled by the config.json
+        #file
+        self.__dict__.update((key, value) for key, value in kwargs.items() if
+                key in allowed_keys)
+
+        # output rejected keys
+        rejected_keys = set(kwargs.keys()) - set(allowed_keys)
+        if rejected_keys:
+            print "these keys not updated %s" %  ",".join(rejected_keys)
+            #raise ValueError("Invalid arguments provided to constructor %s" %
+            #        rejected_keys)
 
     def makeCommand(self):
         """generate STAR commandline"""
         arglist = ["%s" % self.exe ]
-        arglist.extend([ "--runThreadN %s " % self.threads ])
+        arglist.extend([ "--runThreadN %s" % self.threads ])
         arglist.extend([ "--genomeDir %s" % self.genomeDir ])
-        arglist.extend([ "--readFilesIn %s %s " % (self.reads1, self.reads2) ])
+        if len(self.reads) == 2:
+            arglist.extend([ "--readFilesIn %s %s " % (self.reads[0], self.reads[1]) ])
+        else:
+            arglist.extend([ "--readFilesIn %s " % self.reads[0] ])
+
         arglist.extend([ "--outSAMtype BAM SortedByCoordinate" ])
         arglist.extend([ "--outFileNamePrefix %s" % self.outFileNamePrefix ])
 
         # optimization keep genome in shared memory to prevent reloading between runs
         # msut set RAM lmit for sorting, eg 10Gb
-        arglist.extend([ "--genomeLoad LoadAndKeep "])
-        arglist.extend([ "--limitBAMsortRAM 10737412742"])
-        if self.unmapped == "Fastx":
-            arglist.extend([ "--outReadsUnmapped %s" % self.unmapped ])
+        arglist.extend([ "--genomeLoad %s" % self.genomeLoad ])
+        arglist.extend([ "--limitBAMsortRAM %s" % self.limitBAMsortRAM ])
+
+        if self.unmapped == "Within":
+            arglist.extend([ "--outSAMunmapped %s" % self.unmapped ])
+        elif self.unmapped == "Fastx":
+            arglist.extend([ "--outReadsUnmapped Fastx"])
+        else:
+            arglist.extend([ "--outReadsUnmapped None" ])
 
         # test if reads are gzipped, add this
-        if os.path.splitext(self.reads1)[1] ==".gz":
+        if os.path.splitext(self.reads[0])[1] ==".gz":
             arglist.extend([ "--readFilesCommand zcat "])
 
         if self.twopass == True:
@@ -78,7 +103,7 @@ class STARAligner(Appconfig):
 
 class STARIndexCreator(Appconfig):
     """
-    Wrapper around  START index creator code 
+    Wrapper around  STAR index creator code 
     """
     def __init__(self, outputDir, inputFastaFile, threads=48, SJout=None, SJoverhang=None):
         """ gatk example uses SJoverhang 75 """
