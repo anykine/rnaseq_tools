@@ -55,6 +55,10 @@ class Index(SiteconfigBase):
             #STARIndex = "/home/rtwang/projects/indexes/STAR/ENSEMBL.homo_sapiens.release-83"
             return(STARIndex)
 
+        elif self.version == "ensembl_hg19_149bp" and self.program=="STAR":
+            STARIndex = os.path.join(self.indexBasePath, "star_res/hg19_149bp")
+            return(STARIndex)
+
         elif self.version == "pacbiominfl10hg19" and self.program=="STAR":
             STARIndex = os.path.join(self.indexBasePath, "star_res/pacbio/index/minfl10hg19")
             return(STARIndex)
@@ -76,7 +80,7 @@ class Index(SiteconfigBase):
         # hg19 transcriptome (ensembl, ucsc)
         #
 
-        # this STAR index generated for 150bp reads
+        # this STAR index generated for 150bp reads of GRCh38
         elif self.version == "GRCh38_149" and self.program=="STAR":
             index = os.path.join(self.indexBasePath, "GRCh38/star_res149")
             return(index)
